@@ -46,7 +46,7 @@ typedef struct asteroid_entity {
 // entity timing constants milliseconds)
 #define TIME_ENEMY 1000
 #define TIME_MACRO 100
-#define TIME_ASTROID 4000
+#define TIME_ASTROID 500
 #define TIME_CHARACTER 760
 
 // number of enemies
@@ -79,7 +79,14 @@ extern int screen[];
 // character attrs
 extern int character_x;
 extern int character_y;
+extern int dx; // for moving towards the edge of the screen
+extern int dy; // for moving towards the edge of the screen
 extern int facing;
+extern int health;
+extern float experience;
+extern int sector_x;
+extern int sector_y;
+extern int sector_s;
 
 // main window texture handle
 extern sf::RenderTexture windowTexture;

@@ -39,11 +39,17 @@ float experience = 0;
 // character location
 int character_x = 50;
 int character_y = 50;
+int dx = 0;
+int dy = 0;
 int facing = 0;
 
+int sector_s = 2;
+int sector_x = 4;
+int sector_y = 8;
+
 // game state
-// 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self, 6: mod self confirm
-int state = 0;
+// 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self, 6: mod self confirm, 7: warp setup
+int state = -1;
 
 // texture
 sf::RenderTexture windowTexture;
@@ -79,13 +85,19 @@ int main(){
     if (init_displays() < 0) { return -3; }
 
     // generate level
-    generate_level();
+    build_terrain(sector_x, sector_y, sector_s);
 
+    // generate font
     sf::Text text;
     sf::Font font;
     if (!font.loadFromFile("res/telegrama_raw.ttf"));
     text.setFont(font);
     text.setCharacterSize(16);
+
+    // init jump position;
+    int jump_x = 0;
+    int jump_y = 0;
+    int jump_s = 0;
 
     // main loop
     while (window.isOpen()){
@@ -104,12 +116,60 @@ int main(){
         while (window.pollEvent(event)){
             if (event.type == sf::Event::Closed) window.close();
             if (event.type == sf::Event::KeyReleased) {
+
+                // state handling
                 if (event.key.code == sf::Keyboard::Num1) {
+                    // main menu
                     state = 0;
                 } else if (event.key.code == sf::Keyboard::Num2) {
+                    // view ssf::RectangleShape r(sf::Vector2f(16, 16));tate
                     state = 1;
+                } else if (event.key.code == sf::Keyboard::Num3) {
+                    // view state
+                    state = 5;
+                } else if (event.key.code == sf::Keyboard::Num4) {
+                    // view state
+                    state = 7;
+                    // reset jump to settings
+                    jump_x = sector_x;
+                    jump_y = sector_y;
+                    jump_s = sector_s;
                 } else if (event.key.code == sf::Keyboard::Num0) {
+                    // logo mode
                     state = -1;
+//                    generate_level();
+                }
+
+                if (event.key.code == sf::Keyboard::W){
+                    jump_y--;
+                    if (jump_y > 9) jump_y = 9;
+                    if (jump_y < 0) jump_y = 0;
+                } else if (event.key.code == sf::Keyboard::A){
+                    jump_x--;
+                    if (jump_x > 9) jump_x = 9;
+                    if (jump_x < 0) jump_x = 0;
+                } else if (event.key.code == sf::Keyboard::S){
+                    jump_y++;
+                    if (jump_y > 9) jump_y = 9;
+                    if (jump_y < 0) jump_y = 0;
+                } else if (event.key.code == sf::Keyboard::D){
+                    jump_x++;
+                    if (jump_x > 9) jump_x = 9;
+                    if (jump_x < 0) jump_x = 0;
+                } else if (event.key.code == sf::Keyboard::Q){
+                    jump_s++;
+                    if (jump_s > 3) jump_s = 0;
+                    if (jump_s < 0) jump_s = 3;
+                } else if (event.key.code == sf::Keyboard::E) {
+                    jump_s--;
+                    if (jump_s > 3) jump_s = 0;
+                    if (jump_s < 0) jump_s = 3;
+                } else if (event.key.code == sf::Keyboard::Tilde && state == 7){
+                    sector_x = jump_x;
+                    sector_y = jump_y;
+                    sector_s = jump_s;// for moving towards the edge of the screen
+                    build_terrain(sector_x, sector_y, sector_s);
+                    state = 0;
                 }
 
                 if (event.key.code == sf::Keyboard::V){
@@ -140,13 +200,17 @@ int main(){
                         facing = 1;
                     }
                 } else if (event.key.code == sf::Keyboard::Space){
-                    if (top_of_entities < 64){
-                        macro_entities[top_of_entities].facing = facing;
-                        macro_entities[top_of_entities].x = character_x;
-                        macro_entities[top_of_entities].y = character_y;
-                        macro_entities[top_of_entities].type = 0;
-                        macro_entities[top_of_entities].id = top_of_entities + rand() % 128;
-                        top_of_entities++;
+                    if (state == 0){
+                        if (top_of_entities < 64){
+                            macro_entities[top_of_entities].facing = facing;
+                            macro_entities[top_of_entities].x = character_x;
+                            macro_entities[top_of_entities].y = character_y;
+                            macro_entities[top_of_entities].type = 0;
+                            macro_entities[top_of_entities].id = top_of_entities + rand() % 128;
+                            top_of_entities++;
+                        }
+                    } else if (state == -1){
+                        state = 0;
                     }
                 }
 
@@ -165,38 +229,37 @@ int main(){
         //update everything
         if (state == 0){
             update_enemies();
-            update_asteroids();
             update_macro();
         }
-
-        // draw time
-        char tim[20];
-        text.setString("Time: ");
-        text.setPosition(816, S_HEIGHT - 18);
-        windowTexture.draw(text);
-        sprintf(tim, "%d", elapsed );
-        text.setString(tim);
-        text.setPosition(900, S_HEIGHT - 16);
-        windowTexture.draw(text);
-        sprintf(tim, "%d", time_asteroid );
-        text.setString(tim);
-        text.setPosition(960, S_HEIGHT - 16);
-        windowTexture.draw(text);
 
         // display main texture
         windowTexture.setSmooth(true);
         windowTexture.display();
         const sf::Texture& texture = windowTexture.getTexture();
         sf::Sprite sprite(texture);
-        sprite.setPosition(1,1);
+        sprite.setPosition(0,0);
 
         // draw screen
-        if (state == 0 || state == 2){
-            display(false, 0);
-        } else if (state == 1){
-            draw_menu(0);
-        } else {
-            cleardisplay();
+        switch(state){
+            case -1:
+                draw_logo();
+                break;
+            case 0:
+            case 2:
+                display(0, false);
+                break;
+            case 1:
+                draw_menu(0);
+                break;
+            case 5:
+                draw_self();
+                break;
+            case 7:
+                draw_prewarp(jump_x, jump_y, jump_s);
+                break;
+            default:
+                cleardisplay();
+                break;
         }
 
         // tidy up the window

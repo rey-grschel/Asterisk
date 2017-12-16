@@ -27,6 +27,8 @@ sf::Texture rocket_1_3;
 sf::Texture rocket_1_4;
 sf::Texture station;
 sf::Texture ice_station;
+sf::Texture logo;
+sf::Texture empty_sector;
 
 int g_state = 0;
 
@@ -65,6 +67,8 @@ int init_displays(void){
     if(!rocket_1_4.loadFromFile("res/rockets-1-4.png")) return -1;
     if(!station.loadFromFile("res/station.png")) return -1;
     if(!ice_station.loadFromFile("res/ice-station.png")) return -1;
+    if(!logo.loadFromFile("res/logo.png")) return -1;
+    if(!empty_sector.loadFromFile("res/empty_sector.png")) return -1;
 
     return 0;
 }
@@ -86,6 +90,70 @@ void cleardisplay(){
             windowTexture.draw(r);
         }
     }
+}
+
+void draw_prewarp(int x, int y, int s){
+    sf::RectangleShape r(sf::Vector2f(16, 16));
+    sf::Text text;
+    sf::Font font;
+    char tim[80];
+    if (!font.loadFromFile("res/telegrama_raw.ttf"));
+    text.setFont(font);
+    text.setCharacterSize(16);
+    text.setColor(sf::Color::White);
+
+    r.setTexture(&empty_sector);
+    for (int i = 1; i < 11; i++){
+        for (int j = 1; j < 11; j++){
+            r.setPosition((i * 16) , j * 16);
+            windowTexture.draw(r);
+            r.setPosition((i + 11) * 16 , j * 16);
+            windowTexture.draw(r);
+            r.setPosition(i * 16 , (j + 11) * 16);
+            windowTexture.draw(r);
+            r.setPosition((i + 11) * 16 , (j + 11) * 16);
+            windowTexture.draw(r);
+        }
+    }
+
+    if (s == 0) {
+        r.setPosition((x + 1) * 16, (y + 1) * 16);
+    } else if (s == 1){
+        r.setPosition((x + 1) * 16 + 176, (y + 1) * 16);
+    } else if (s == 2){
+        r.setPosition((x + 1) * 16 + 176, (y + 1) * 16 + 176);
+    } else if (s == 3){
+        r.setPosition((x + 1) * 16, (y + 1) * 16 + 176);
+    }
+    r.setTexture(&character_t);
+    windowTexture.draw(r);
+
+    text.setString("Warp Config System v12.81.20392");
+    text.setPosition(368, 16);
+    windowTexture.draw(text);
+
+    text.setString("Quadrant: Epsilon");
+    text.setPosition(368, 32);
+    windowTexture.draw(text);
+
+    sprintf(tim, "Jump Sector: %d - %d - %d    Current Sector: %d - %d - %d", s, x, y, sector_s, sector_x, sector_y);
+    text.setString(tim);
+    text.setPosition(368, 48);
+    windowTexture.draw(text);
+
+    text.setString("Warp Engine Integrity: 87%");
+    text.setPosition(368, 64);
+    windowTexture.draw(text);
+
+    text.setString("Use WASD to move jump to coords");
+    text.setPosition(368, 320);
+    windowTexture.draw(text);
+
+    text.setString("Press ~ to confirm jump");
+    text.setPosition(368, 336);
+    windowTexture.draw(text);
+
+    windowTexture.display();
 }
 
 void draw_self(){
@@ -136,6 +204,7 @@ void draw_self(){
     text.setString("Credits: 14591");
     text.setPosition(PAD_LEFT + 16, PAD_TOP + 196);
     windowTexture.draw(text);
+    windowTexture.display();
 }
 
 void draw_menu(int type){
@@ -282,5 +351,12 @@ void display(bool update, int state){
     text.setString("Experience: ");
     text.setPosition(816,16);
     windowTexture.draw(text);
+    windowTexture.display();
+}
+
+void draw_logo(){
+    sf::RectangleShape r(sf::Vector2f(S_WIDTH, S_HEIGHT));
+    r.setTexture(&logo);
+    windowTexture.draw(r);
     windowTexture.display();
 }

@@ -2,6 +2,9 @@
 Asteroid + risk
 
 ## TODO
+- Setup level loading
+- Add "At Warp" screen
+- Convert all resources to homebreq compat format
 - Fix movement near edge of screen and also everywhere
 - Clean up code
 - Fix bugs on level regen

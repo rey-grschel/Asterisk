@@ -98,3 +98,12 @@ void generate_level(void){
         character_y = HEIGHT - (rand() % 10 + 25);
     }
 }
+
+void build_terrain(int sector_x, int sector_y, int sector_s){
+
+}
+
+char * get_sector(int sector){
+    // read file levelX-S, x is level, S is sector (0 - 3)
+    // read 10 characters for ten lines then return grid
+}

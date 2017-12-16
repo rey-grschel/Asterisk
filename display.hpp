@@ -8,6 +8,8 @@ void stat_screen(int i);
 void cleardisplay();
 void draw_menu(int type);
 void draw_self();
+void draw_prewarp(int x, int y, int s);
+void draw_logo();
 
 // main display
 void display(bool update, int state);
