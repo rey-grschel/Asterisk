@@ -7,39 +7,39 @@ using namespace std;
 
 void generate_asteroid(int x, int y){
     // set origin tile
-    set_terrain(x, y, 1);
+    // set_terrain(x, y, 1);
 
     // add peripheral tiles
     int tiles = 0;
     switch(rand() % 5){
         case 0:
-            set_terrain(x + 1, y, 2);
+            //set_terrain(x + 1, y, 2);
             tiles = 1;
             break;
         case 1:
-            set_terrain(x, y + 1, 2);
+            //set_terrain(x, y + 1, 2);
             tiles = 2;
             break;
         case 2:
-            set_terrain(x + 1, y + 1, 2);
+            //set_terrain(x + 1, y + 1, 2);
             tiles = 3;
             break;
         case 3:
-            set_terrain(x + 1, y, 2);
-            set_terrain(x + 1, y + 1, 2);
+            //set_terrain(x + 1, y, 2);
+            //set_terrain(x + 1, y + 1, 2);
             tiles = 4;
             break;
         default:
-            set_terrain(x + 1, y, 2);
-            set_terrain(x + 1, y + 1, 2);
-            set_terrain(x, y + 1, 2);
+            //set_terrain(x + 1, y, 2);
+            //set_terrain(x + 1, y + 1, 2);
+            //set_terrain(x, y + 1, 2);
             tiles = 5;
             break;
     }
 
     bool special = false;
 
-    if (rand() % 100 == 4){
+    if (rand() % 6 == 4){
         special = true;
         if(rand() % 10 > 5){
             set_terrain(x + 1, y, 12);
@@ -53,8 +53,8 @@ void generate_asteroid(int x, int y){
         asteroids[top_of_asteroids].y = y;
         asteroids[top_of_asteroids].type = special;
         asteroids[top_of_asteroids].facing = rand() % 4;
-        asteroids[top_of_asteroids].mod_vx = ((rand() % 10 > 5) ? ((rand() % 10 > 5) ? -1 : 1) : 0);
-        asteroids[top_of_asteroids].mod_vy = ((rand() % 10 > 5) ? ((rand() % 10 > 5) ? -1 : 1) : 0);
+        asteroids[top_of_asteroids].mod_vx = 0; //((rand() % 10 > 5) ? ((rand() % 10 > 5) ? -1 : 1) : 0);
+        asteroids[top_of_asteroids].mod_vy = 0;//((rand() % 10 > 5) ? ((rand() % 10 > 5) ? -1 : 1) : 0);
         asteroids[top_of_asteroids].tiles = tiles;
 
         top_of_asteroids++;

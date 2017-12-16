@@ -7,6 +7,7 @@ void display_interact(void);
 void stat_screen(int i);
 void cleardisplay();
 void draw_menu(int type);
+void draw_self();
 
 // main display
 void display(bool update, int state);

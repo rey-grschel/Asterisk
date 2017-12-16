@@ -1,4 +1,5 @@
 #include "main.hpp"
+#include "terrain.hpp"
 #include "display.hpp"
 #include <iostream>
 using namespace std;
@@ -6,15 +7,6 @@ using namespace std;
 void update_enemies(){
     if (time_enemy > TIME_ENEMY ){
         time_enemy = 0;
-        cout << "UD E" << endl;
-        for(int i = 0; i < ENEMIES; i++){
-            if ( (enemies[i].x > WIDTH || enemies[i].x < 0 || enemies[i].y < 0 || enemies[i].y > HEIGHT ) && enemies[i].id > 0){
-                enemies[i].x = -10;
-                enemies[i].y = -10;
-                enemies[i].facing = -1;
-                cout << "ERASED" << endl;
-            }
-        }
         for(int i = 0; i < ENEMIES; i++){
             switch (enemies[i].facing){
                 case 0:
@@ -86,16 +78,6 @@ void update_macro(void){
             case 6: character_y++; character_x--; break;
             case 7: character_x--; character_y--; break;
             default: break;
-        }
-    }
-}
-
-void update_asteroids(void){
-    if (time_asteroid > TIME_ASTROID){
-        time_asteroid = 9;
-        for (int i = 0; i < top_of_asteroids; i++){
-            asteroids[i].x += asteroids[i].mod_vx;
-            asteroids[i].y += asteroids[i].mod_vy;
         }
     }
 }

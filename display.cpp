@@ -26,6 +26,7 @@ sf::Texture rocket_1_2;
 sf::Texture rocket_1_3;
 sf::Texture rocket_1_4;
 sf::Texture station;
+sf::Texture ice_station;
 
 int g_state = 0;
 
@@ -63,6 +64,7 @@ int init_displays(void){
     if(!rocket_1_3.loadFromFile("res/rockets-1-3.png")) return -1;
     if(!rocket_1_4.loadFromFile("res/rockets-1-4.png")) return -1;
     if(!station.loadFromFile("res/station.png")) return -1;
+    if(!ice_station.loadFromFile("res/ice-station.png")) return -1;
 
     return 0;
 }
@@ -86,11 +88,61 @@ void cleardisplay(){
     }
 }
 
+void draw_self(){
+    sf::RectangleShape r(sf::Vector2f(16, 16));
+    sf::Text text;
+    sf::Font font;
+    char tim[20];
+    if (!font.loadFromFile("res/telegrama_raw.ttf"));
+    text.setFont(font);
+    text.setCharacterSize(16);
+    text.setColor(sf::Color::White);
+
+    cleardisplay();
+
+    sf::Vertex line[] =
+    {
+        sf::Vertex(sf::Vector2f(PAD_LEFT, PAD_TOP)),
+        sf::Vertex(sf::Vector2f(S_WIDTH - PAD_RIGHT, PAD_TOP)),
+        sf::Vertex(sf::Vector2f(S_WIDTH - PAD_RIGHT, S_HEIGHT - PAD_BOTTOM)),
+        sf::Vertex(sf::Vector2f(PAD_LEFT, S_HEIGHT - PAD_BOTTOM))
+    };
+    windowTexture.draw(line, 4, sf::Lines);
+
+    text.setString("Your starcruiser: ");
+    text.setPosition(PAD_LEFT, PAD_TOP);
+    windowTexture.draw(text);
+
+    text.setString("Health: 500 / 500");
+    text.setPosition(PAD_LEFT + 16, PAD_TOP + 32);
+    windowTexture.draw(text);
+
+    text.setString("Experience: 1293 / 5000");
+    text.setPosition(PAD_LEFT + 16, PAD_TOP + 64);
+    windowTexture.draw(text);
+
+    text.setString("Remaining fuel: 7909 / 10000");
+    text.setPosition(PAD_LEFT + 16, PAD_TOP + 96);
+    windowTexture.draw(text);
+
+    text.setString("Rockets: 12 / 50");
+    text.setPosition(PAD_LEFT + 16, PAD_TOP + 128);
+    windowTexture.draw(text);
+
+    text.setString("Rounds: 1029 / 50000");
+    text.setPosition(PAD_LEFT + 16, PAD_TOP + 160);
+    windowTexture.draw(text);
+
+    text.setString("Credits: 14591");
+    text.setPosition(PAD_LEFT + 16, PAD_TOP + 196);
+    windowTexture.draw(text);
+}
+
 void draw_menu(int type){
     sf::RectangleShape r(sf::Vector2f(16, 16));
     sf::Text text;
     sf::Font font;
-    if (!font.loadFromFile("res/nasalization-rg.ttf"));
+    if (!font.loadFromFile("res/telegrama_raw.ttf"));
     text.setFont(font);
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);
@@ -131,7 +183,7 @@ void display(bool update, int state){
     sf::Text text;
     sf::Font font;
     char tim[8];
-    if (!font.loadFromFile("res/nasalization-rg.ttf"));
+    if (!font.loadFromFile("res/telegrama_raw.ttf"));
     text.setFont(font);
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);
@@ -155,7 +207,6 @@ void display(bool update, int state){
     // draw enemies
     text.setColor(sf::Color::Red);
     for (int i = 0; i < ENEMIES; i++){
-        r.setPosition(enemies[i].x * 16, enemies[i].y * 16 );
         switch(enemies[i].facing){
             case 0: r.setTexture(&enemy_t); break;
             case 1: r.setTexture(&enemy_r); break;
@@ -183,12 +234,13 @@ void display(bool update, int state){
 
     for (int i = 0; i < top_of_asteroids; i++){
         if (asteroids[i].type) {
-            r.setTexture(&debug);
+            r.setTexture(&ice_station);
         } else {
             r.setTexture(&asteriod_2);
         }
         r.setPosition(asteroids[i].x * 16, asteroids[i].y * 16);
         windowTexture.draw(r);
+        r.setTexture(&asteriod_1);
         switch(asteroids[i].tiles){
             case 1:
                 //set_terrain(x + 1, y, 2);
