@@ -1,4 +1,5 @@
 #include "main.hpp"
+#include "levels.hpp"
 #include <iostream>
 using namespace std;
 
@@ -14,21 +15,16 @@ sf::Texture enemy_r;
 sf::Texture asteriod_1;
 sf::Texture asteriod_2;
 sf::Texture asteriod_3;
-sf::Texture turret_t;
-sf::Texture turret_r;
-sf::Texture turret_b;
-sf::Texture turret_l;
-sf::Texture floor_s;
 sf::Texture debug;
 sf::Texture wall;
-sf::Texture rocket_1_1;
-sf::Texture rocket_1_2;
-sf::Texture rocket_1_3;
-sf::Texture rocket_1_4;
+sf::Texture rockets_tex;
 sf::Texture station;
 sf::Texture ice_station;
 sf::Texture logo;
 sf::Texture empty_sector;
+sf::Texture ice_field;
+sf::Texture nebula;
+sf::Texture system_texture;
 
 int g_state = 0;
 
@@ -54,21 +50,16 @@ int init_displays(void){
     if(!asteriod_1.loadFromFile("res/asteriod-1.png")) return -1;
     if(!asteriod_2.loadFromFile("res/asteriod-2.png")) return -1;
     if(!asteriod_3.loadFromFile("res/asteriod-3.png")) return -1;
-    if(!turret_t.loadFromFile("res/turret-top.png")) return -1;
-    if(!turret_b.loadFromFile("res/turret-bottom.png")) return -1;
-    if(!turret_l.loadFromFile("res/turret-left.png")) return -1;
-    if(!turret_r.loadFromFile("res/turret-right.png")) return -1;
-    if(!floor_s.loadFromFile("res/floor-steel.png")) return -1;
     if(!debug.loadFromFile("res/debug.png")) return -1;
     if(!wall.loadFromFile("res/wall.png")) return -1;
-    if(!rocket_1_1.loadFromFile("res/rockets-1-1.png")) return -1;
-    if(!rocket_1_2.loadFromFile("res/rockets-1-2.png")) return -1;
-    if(!rocket_1_3.loadFromFile("res/rockets-1-3.png")) return -1;
-    if(!rocket_1_4.loadFromFile("res/rockets-1-4.png")) return -1;
+    if(!rockets_tex.loadFromFile("res/rockets-2.png")) return -1;
     if(!station.loadFromFile("res/station.png")) return -1;
     if(!ice_station.loadFromFile("res/ice-station.png")) return -1;
     if(!logo.loadFromFile("res/logo.png")) return -1;
     if(!empty_sector.loadFromFile("res/empty_sector.png")) return -1;
+    if(!nebula.loadFromFile("res/ice-field.png")) return -1;
+    if(!ice_field.loadFromFile("res/nebula.png")) return -1;
+    if(!system_texture.loadFromFile("res/system.png")) return -1;
 
     return 0;
 }
@@ -81,11 +72,15 @@ void set_terrain(int x, int y, int t){
     mapdata[(y % HEIGHT)][(x % WIDTH)] = t;
 }
 
-void cleardisplay(){
+void cleardisplay(bool _debug){
     sf::RectangleShape r(sf::Vector2f(16, 16));
+    if (_debug){
+        r.setTexture(&debug);
+    } else {
+        r.setTexture(&wall);
+    }
     for (int i = 0; i < WIDTH; i++){
         for (int j = 0; j <  HEIGHT; j++){
-            r.setTexture(&wall);
             r.setPosition(i * 16, j * 16);
             windowTexture.draw(r);
         }
@@ -105,17 +100,46 @@ void draw_prewarp(int x, int y, int s){
     r.setTexture(&empty_sector);
     for (int i = 1; i < 11; i++){
         for (int j = 1; j < 11; j++){
+            switch(level_0_0[i - 1][j - 1]){
+                case 0: r.setTexture(&empty_sector); break;
+                case 1: r.setTexture(&station); break;
+                case 2: r.setTexture(&ice_field); break;
+                case 3: r.setTexture(&nebula); break;
+                case 4: r.setTexture(&system_texture); break;
+            }
             r.setPosition((i * 16) , j * 16);
             windowTexture.draw(r);
+            switch(level_0_1[i - 1][j - 1]){
+                case 0: r.setTexture(&empty_sector); break;
+                case 1: r.setTexture(&station); break;
+                case 2: r.setTexture(&ice_field); break;
+                case 3: r.setTexture(&nebula); break;
+                case 4: r.setTexture(&system_texture); break;
+            }
             r.setPosition((i + 11) * 16 , j * 16);
             windowTexture.draw(r);
+            switch(level_0_2[i - 1][j - 1]){
+                case 0: r.setTexture(&empty_sector); break;
+                case 1: r.setTexture(&station); break;
+                case 2: r.setTexture(&ice_field); break;
+                case 3: r.setTexture(&nebula); break;
+                case 4: r.setTexture(&system_texture); break;
+            }
             r.setPosition(i * 16 , (j + 11) * 16);
             windowTexture.draw(r);
+            switch(level_0_3[i - 1][j - 1]){
+                case 0: r.setTexture(&empty_sector); break;
+                case 1: r.setTexture(&station); break;
+                case 2: r.setTexture(&ice_field); break;
+                case 3: r.setTexture(&nebula); break;
+                case 4: r.setTexture(&system_texture); break;
+            }
             r.setPosition((i + 11) * 16 , (j + 11) * 16);
             windowTexture.draw(r);
         }
     }
 
+    // draw jump position
     if (s == 0) {
         r.setPosition((x + 1) * 16, (y + 1) * 16);
     } else if (s == 1){
@@ -128,21 +152,51 @@ void draw_prewarp(int x, int y, int s){
     r.setTexture(&character_t);
     windowTexture.draw(r);
 
+    // search, inform
+    char[16] temp_data;
+    switch(s){
+        case 0:
+            // search
+            for (int i = 0; i < 10; i++){
+                if(level_0_0_tile_data[i].x == x && level_0_0_tile_data[i].y == y){
+                    temp_data = level_0_0_tile_data[i].data;
+                }
+            }
+            break;
+    }
+    text.setString(temp_data);
+    text.setPosition(368, 112);
+    windowTexture.draw(text);
+
+
+    // draw cuttent position
+    if (sector_s == 0) {
+        r.setPosition((sector_x + 1) * 16, (sector_y+ 1) * 16);
+    } else if (sector_s == 1){
+        r.setPosition((sector_x + 1) * 16 + 176, (sector_y + 1) * 16);
+    } else if (sector_s == 2){
+        r.setPosition((sector_x + 1) * 16 + 176, (sector_y + 1) * 16 + 176);
+    } else if (sector_s == 3){
+        r.setPosition((sector_x + 1) * 16, (sector_y + 1) * 16 + 176);
+    }
+    r.setTexture(&enemy_t);
+    windowTexture.draw(r);
+
     text.setString("Warp Config System v12.81.20392");
     text.setPosition(368, 16);
     windowTexture.draw(text);
 
     text.setString("Quadrant: Epsilon");
-    text.setPosition(368, 32);
+    text.setPosition(368, 48);
     windowTexture.draw(text);
 
     sprintf(tim, "Jump Sector: %d - %d - %d    Current Sector: %d - %d - %d", s, x, y, sector_s, sector_x, sector_y);
     text.setString(tim);
-    text.setPosition(368, 48);
+    text.setPosition(368, 64);
     windowTexture.draw(text);
 
     text.setString("Warp Engine Integrity: 87%");
-    text.setPosition(368, 64);
+    text.setPosition(368, 80);
     windowTexture.draw(text);
 
     text.setString("Use WASD to move jump to coords");
@@ -160,13 +214,13 @@ void draw_self(){
     sf::RectangleShape r(sf::Vector2f(16, 16));
     sf::Text text;
     sf::Font font;
-    char tim[20];
+    char tim[80];
     if (!font.loadFromFile("res/telegrama_raw.ttf"));
     text.setFont(font);
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);
 
-    cleardisplay();
+    cleardisplay(false);
 
     sf::Vertex line[] =
     {
@@ -181,29 +235,36 @@ void draw_self(){
     text.setPosition(PAD_LEFT, PAD_TOP);
     windowTexture.draw(text);
 
-    text.setString("Health: 500 / 500");
+    sprintf(tim, "Health: %d / 500", health);
+    text.setString(tim);
     text.setPosition(PAD_LEFT + 16, PAD_TOP + 32);
     windowTexture.draw(text);
 
-    text.setString("Experience: 1293 / 5000");
+    sprintf(tim, "Experience: %d / 5000", experience);
+    text.setString(tim);
     text.setPosition(PAD_LEFT + 16, PAD_TOP + 64);
     windowTexture.draw(text);
 
-    text.setString("Remaining fuel: 7909 / 10000");
+    sprintf(tim, "Remaining fuel: %d / 10000", fuel);
+    text.setString(tim);
     text.setPosition(PAD_LEFT + 16, PAD_TOP + 96);
     windowTexture.draw(text);
 
-    text.setString("Rockets: 12 / 50");
+    sprintf(tim, "Rockets: %d / 50", rockets);
+    text.setString(tim);
     text.setPosition(PAD_LEFT + 16, PAD_TOP + 128);
     windowTexture.draw(text);
 
-    text.setString("Rounds: 1029 / 50000");
+    sprintf(tim, "Rounds: %d / 50000", rounds);
+    text.setString(tim);
     text.setPosition(PAD_LEFT + 16, PAD_TOP + 160);
     windowTexture.draw(text);
 
-    text.setString("Credits: 14591");
+    sprintf(tim, "Credits: %d", credits);
+    text.setString(tim);
     text.setPosition(PAD_LEFT + 16, PAD_TOP + 196);
     windowTexture.draw(text);
+
     windowTexture.display();
 }
 
@@ -216,7 +277,7 @@ void draw_menu(int type){
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);
 
-    cleardisplay();
+    cleardisplay(false);
 
     r.setPosition(S_WIDTH - PAD_RIGHT - 32, PAD_TOP + 16);
     r.setTexture(&station);
@@ -251,13 +312,13 @@ void draw_menu(int type){
 void display(bool update, int state){
     sf::Text text;
     sf::Font font;
-    char tim[8];
+    char tim[80];
     if (!font.loadFromFile("res/telegrama_raw.ttf"));
     text.setFont(font);
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);
 
-    cleardisplay();
+    cleardisplay(true);
 
     // rectangle template
     sf::RectangleShape r(sf::Vector2f(16, 16));
@@ -294,13 +355,12 @@ void display(bool update, int state){
     for(int i = 0; i < top_of_entities; i++){
         if(macro_entities[i].type == 0){
             r.setPosition(macro_entities[i].x * 16, macro_entities[i].y * 16);
-            r.setTexture(&rocket_1_1);
+            r.setTexture(&rockets_tex);
             windowTexture.draw(r);
         }
     }
 
     // draw asteroids
-
     for (int i = 0; i < top_of_asteroids; i++){
         if (asteroids[i].type) {
             r.setTexture(&ice_station);
@@ -344,14 +404,29 @@ void display(bool update, int state){
         }
     }
 
-    // draw sidebar text;
-    text.setString("Fuel: ");
-    text.setPosition(816,0);
+    sprintf(tim, "Health: %d / 500", health);
+    text.setString(tim);
+    text.setPosition(816, 16);
     windowTexture.draw(text);
-    text.setString("Experience: ");
-    text.setPosition(816,16);
+
+    sprintf(tim, "Experience: %d / 5000", experience);
+    text.setString(tim);
+    text.setPosition(816, 32);
     windowTexture.draw(text);
+
+    sprintf(tim, "Remaining fuel: %d / 10000", fuel);
+    text.setString(tim);
+    text.setPosition(816, 48);
+    windowTexture.draw(text);
+
+    sprintf(tim, "At: s%d (%d , %d)", sector_s, sector_x, sector_y);
+    text.setString(tim);
+    text.setPosition(816, 64);
+    windowTexture.draw(text);
+
     windowTexture.display();
+
+
 }
 
 void draw_logo(){

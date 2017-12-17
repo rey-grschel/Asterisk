@@ -1,6 +1,7 @@
 #include "main.hpp"
 #include "display.hpp"
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 // global enemy list
@@ -100,10 +101,12 @@ void generate_level(void){
 }
 
 void build_terrain(int sector_x, int sector_y, int sector_s){
-
-}
-
-char * get_sector(int sector){
-    // read file levelX-S, x is level, S is sector (0 - 3)
-    // read 10 characters for ten lines then return grid
+    switch(level){
+        case 0:
+            switch(sector_s){
+                case 0:
+                    break;
+            }
+            break;
+    }
 }

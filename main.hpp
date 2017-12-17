@@ -84,9 +84,14 @@ extern int dy; // for moving towards the edge of the screen
 extern int facing;
 extern int health;
 extern float experience;
+extern int fuel;
+extern int rockets;
+extern int rounds;
+extern int credits;
 extern int sector_x;
 extern int sector_y;
 extern int sector_s;
+extern int level;
 
 // main window texture handle
 extern sf::RenderTexture windowTexture;

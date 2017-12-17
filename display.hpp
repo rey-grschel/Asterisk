@@ -5,7 +5,7 @@ void display_combat(void);
 void display_character(void);
 void display_interact(void);
 void stat_screen(int i);
-void cleardisplay();
+void cleardisplay(bool _debug);
 void draw_menu(int type);
 void draw_self();
 void draw_prewarp(int x, int y, int s);

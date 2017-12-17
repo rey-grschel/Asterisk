@@ -36,6 +36,11 @@ int health = 500;
 // character experience
 float experience = 0;
 
+int rockets = 50;
+int rounds = 10000;
+int credits = 1000;
+int fuel = 10000;
+
 // character location
 int character_x = 50;
 int character_y = 50;
@@ -46,6 +51,8 @@ int facing = 0;
 int sector_s = 2;
 int sector_x = 4;
 int sector_y = 8;
+
+int level = 0;
 
 // game state
 // 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self, 6: mod self confirm, 7: warp setup
@@ -62,6 +69,8 @@ int main(){
 
     // initalize rand
     srand (time(NULL));
+
+    cout << "sizeof: " << sizeof(get_sector(0)) << endl;
 
     // create window
     sf::RenderWindow window(sf::VideoMode(S_WIDTH, S_HEIGHT), "Asterisk");
@@ -258,7 +267,7 @@ int main(){
                 draw_prewarp(jump_x, jump_y, jump_s);
                 break;
             default:
-                cleardisplay();
+                cleardisplay(false);
                 break;
         }
 
