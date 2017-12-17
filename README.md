@@ -3,7 +3,7 @@ Asteroid + risk
 
 ## TODO
 - Setup level loading
-- Add "At Warp" screen
+- Fix icons on at warp screen
 - Convert all resources to homebreq compat format
 - Fix movement near edge of screen and also everywhere
 - Clean up code

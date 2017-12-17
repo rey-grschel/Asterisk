@@ -118,7 +118,7 @@ void draw_prewarp(int x, int y, int s){
             }
             r.setPosition((i + 11) * 16 , j * 16);
             windowTexture.draw(r);
-            switch(level_0_2[i - 1][j - 1]){
+            switch(level_0_3[i - 1][j - 1]){
                 case 0: r.setTexture(&empty_sector); break;
                 case 1: r.setTexture(&station); break;
                 case 2: r.setTexture(&ice_field); break;
@@ -127,7 +127,7 @@ void draw_prewarp(int x, int y, int s){
             }
             r.setPosition(i * 16 , (j + 11) * 16);
             windowTexture.draw(r);
-            switch(level_0_3[i - 1][j - 1]){
+            switch(level_0_2[i - 1][j - 1]){
                 case 0: r.setTexture(&empty_sector); break;
                 case 1: r.setTexture(&station); break;
                 case 2: r.setTexture(&ice_field); break;
@@ -153,13 +153,53 @@ void draw_prewarp(int x, int y, int s){
     windowTexture.draw(r);
 
     // search, inform
-    char[16] temp_data;
+    char temp_data[16];
+    for (int i = 0; i < 16; i++){
+        temp_data[i] = 0;
+    }
+
     switch(s){
         case 0:
             // search
             for (int i = 0; i < 10; i++){
-                if(level_0_0_tile_data[i].x == x && level_0_0_tile_data[i].y == y){
-                    temp_data = level_0_0_tile_data[i].data;
+                // yes these need to be switched eventually someone (not me) will fix this
+                if(level_0_0_tile_data[i].y == x && level_0_0_tile_data[i].x == y){
+                    for (int j = 0; j < 16; j++){
+                        temp_data[j] = level_0_0_tile_data[i].data[j];
+                    }
+                }
+            }
+            break;
+        case 1:
+            // search
+            for (int i = 0; i < 10; i++){
+                // yes these need to be switched eventually someone (not me) will fix this
+                if(level_0_1_tile_data[i].y == x && level_0_1_tile_data[i].x == y){
+                    for (int j = 0; j < 16; j++){
+                        temp_data[j] = level_0_1_tile_data[i].data[j];
+                    }
+                }
+            }
+            break;
+        case 3:
+            // search
+            for (int i = 0; i < 10; i++){
+                // yes these need to be switched eventually someone (not me) will fix this
+                if(level_0_3_tile_data[i].y == x && level_0_3_tile_data[i].x == y){
+                    for (int j = 0; j < 16; j++){
+                        temp_data[j] = level_0_3_tile_data[i].data[j];
+                    }
+                }
+            }
+            break;
+        case 2:
+            // search
+            for (int i = 0; i < 10; i++){
+                // yes these need to be switched eventually someone (not me) will fix this
+                if(level_0_2_tile_data[i].y == x && level_0_2_tile_data[i].x == y){
+                    for (int j = 0; j < 16; j++){
+                        temp_data[j] = level_0_2_tile_data[i].data[j];
+                    }
                 }
             }
             break;
@@ -351,12 +391,15 @@ void display(bool update, int state){
         windowTexture.draw(text);
     }
     text.setColor(sf::Color::White);
+
     // draw macro entities
     for(int i = 0; i < top_of_entities; i++){
         if(macro_entities[i].type == 0){
             r.setPosition(macro_entities[i].x * 16, macro_entities[i].y * 16);
             r.setTexture(&rockets_tex);
             windowTexture.draw(r);
+        } else if (macro_entities[i].type == 1){
+
         }
     }
 

@@ -5,6 +5,7 @@
 #include "display.hpp"
 #include "terrain.hpp"
 #include "entity.hpp"
+#include "levels.hpp"
 using namespace std;
 
 // timer
@@ -70,7 +71,7 @@ int main(){
     // initalize rand
     srand (time(NULL));
 
-    cout << "sizeof: " << sizeof(get_sector(0)) << endl;
+    cout << "sizeof: " << sizeof(level_0_0_tile_data) << endl;
 
     // create window
     sf::RenderWindow window(sf::VideoMode(S_WIDTH, S_HEIGHT), "Asterisk");
@@ -94,7 +95,9 @@ int main(){
     if (init_displays() < 0) { return -3; }
 
     // generate level
-    build_terrain(sector_x, sector_y, sector_s);
+    cout << "TERRAIN ..." << endl;
+    build_terrain(0, 0, 0);
+    cout << "DONE" << endl;
 
     // generate font
     sf::Text text;

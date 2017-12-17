@@ -23,7 +23,7 @@ typedef struct asteroid_entity {
     int y;
     int mod_vx;
     int mod_vy;
-    int info[4];
+    int data[16];
     int tiles;
 };
 
