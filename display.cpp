@@ -4,6 +4,7 @@
 using namespace std;
 
 // texture definitions
+// TODO: need 45* character textures
 sf::Texture character_t;
 sf::Texture character_l;
 sf::Texture character_b;
@@ -64,14 +65,6 @@ int init_displays(void){
     return 0;
 }
 
-int get_terrain(int x, int y){
-    return mapdata[(y % HEIGHT)][(x % WIDTH)];
-}
-
-void set_terrain(int x, int y, int t){
-    mapdata[(y % HEIGHT)][(x % WIDTH)] = t;
-}
-
 void cleardisplay(bool _debug){
     sf::RectangleShape r(sf::Vector2f(16, 16));
     if (_debug){
@@ -97,9 +90,11 @@ void draw_prewarp(int x, int y, int s){
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);
 
+    // pick default texture
     r.setTexture(&empty_sector);
     for (int i = 1; i < 11; i++){
         for (int j = 1; j < 11; j++){
+            // draw sector 1
             switch(level_0_0[i - 1][j - 1]){
                 case 0: r.setTexture(&empty_sector); break;
                 case 1: r.setTexture(&station); break;
@@ -109,6 +104,8 @@ void draw_prewarp(int x, int y, int s){
             }
             r.setPosition((i * 16) , j * 16);
             windowTexture.draw(r);
+
+            // draw sector 1
             switch(level_0_1[i - 1][j - 1]){
                 case 0: r.setTexture(&empty_sector); break;
                 case 1: r.setTexture(&station); break;
@@ -118,6 +115,8 @@ void draw_prewarp(int x, int y, int s){
             }
             r.setPosition((i + 11) * 16 , j * 16);
             windowTexture.draw(r);
+
+            // draw sector 3
             switch(level_0_3[i - 1][j - 1]){
                 case 0: r.setTexture(&empty_sector); break;
                 case 1: r.setTexture(&station); break;
@@ -127,6 +126,8 @@ void draw_prewarp(int x, int y, int s){
             }
             r.setPosition(i * 16 , (j + 11) * 16);
             windowTexture.draw(r);
+
+            // draw sector 2
             switch(level_0_2[i - 1][j - 1]){
                 case 0: r.setTexture(&empty_sector); break;
                 case 1: r.setTexture(&station); break;
@@ -152,12 +153,13 @@ void draw_prewarp(int x, int y, int s){
     r.setTexture(&character_t);
     windowTexture.draw(r);
 
-    // search, inform
+    // initalize temp
     char temp_data[16];
     for (int i = 0; i < 16; i++){
         temp_data[i] = 0;
     }
 
+    // search, inform
     switch(s){
         case 0:
             // search
@@ -222,31 +224,28 @@ void draw_prewarp(int x, int y, int s){
     r.setTexture(&enemy_t);
     windowTexture.draw(r);
 
+    // draw text
     text.setString("Warp Config System v12.81.20392");
     text.setPosition(368, 16);
     windowTexture.draw(text);
-
     text.setString("Quadrant: Epsilon");
     text.setPosition(368, 48);
     windowTexture.draw(text);
-
     sprintf(tim, "Jump Sector: %d - %d - %d    Current Sector: %d - %d - %d", s, x, y, sector_s, sector_x, sector_y);
     text.setString(tim);
     text.setPosition(368, 64);
     windowTexture.draw(text);
-
     text.setString("Warp Engine Integrity: 87%");
     text.setPosition(368, 80);
     windowTexture.draw(text);
-
     text.setString("Use WASD to move jump to coords");
     text.setPosition(368, 320);
     windowTexture.draw(text);
-
     text.setString("Press ~ to confirm jump");
     text.setPosition(368, 336);
     windowTexture.draw(text);
 
+    // make it good fam
     windowTexture.display();
 }
 
@@ -358,7 +357,8 @@ void display(bool update, int state){
     text.setCharacterSize(16);
     text.setColor(sf::Color::White);
 
-    cleardisplay(true);
+    // clear display
+    cleardisplay(false);
 
     // rectangle template
     sf::RectangleShape r(sf::Vector2f(16, 16));
@@ -374,102 +374,46 @@ void display(bool update, int state){
     }
     windowTexture.draw(r);
 
-    // draw enemies
-    text.setColor(sf::Color::Red);
-    for (int i = 0; i < ENEMIES; i++){
-        switch(enemies[i].facing){
-            case 0: r.setTexture(&enemy_t); break;
-            case 1: r.setTexture(&enemy_r); break;
-            case 2: r.setTexture(&enemy_b); break;
-            case 3: r.setTexture(&enemy_l); break;
-            default: r.setTexture(&debug);
-        }
-        // windowTexture.draw(r);
-        sprintf(tim, "%d", enemies[i].id );
-        text.setString(tim);
-        text.setPosition(enemies[i].x * 16 + 2, enemies[i].y * 16 -2);
-        windowTexture.draw(text);
-    }
-    text.setColor(sf::Color::White);
-
-    // draw macro entities
-    for(int i = 0; i < top_of_entities; i++){
-        if(macro_entities[i].type == 0){
-            r.setPosition(macro_entities[i].x * 16, macro_entities[i].y * 16);
-            r.setTexture(&rockets_tex);
-            windowTexture.draw(r);
-        } else if (macro_entities[i].type == 1){
-
-        }
-    }
-
-    // draw asteroids
-    for (int i = 0; i < top_of_asteroids; i++){
-        if (asteroids[i].type) {
-            r.setTexture(&ice_station);
-        } else {
-            r.setTexture(&asteriod_2);
-        }
-        r.setPosition(asteroids[i].x * 16, asteroids[i].y * 16);
-        windowTexture.draw(r);
-        r.setTexture(&asteriod_1);
-        switch(asteroids[i].tiles){
+    // draw entities
+    for (int i = 0; i < num_entities; i++){
+        switch(entities[i].type){
+            case 0:
+                r.setTexture(&station);
+                break;
             case 1:
-                //set_terrain(x + 1, y, 2);
-                r.setPosition((asteroids[i].x + 1) * 16, asteroids[i].y * 16);
-                windowTexture.draw(r);
+                r.setTexture(&asteriod_1);
                 break;
             case 2:
-                //set_terrain(x, y + 1, 2);
-                r.setPosition(asteroids[i].x * 16, (asteroids[i].y + 1) * 16);
-                windowTexture.draw(r);
+                r.setTexture(&enemy_t);
                 break;
             case 3:
-                r.setPosition((asteroids[i].x + 1) * 16, (asteroids[i].y + 1) * 16);
-                windowTexture.draw(r);
-                break;
-            case 4:
-                r.setPosition((asteroids[i].x + 1) * 16, asteroids[i].y * 16);
-                windowTexture.draw(r);
-                r.setPosition((asteroids[i].x + 1) * 16, (asteroids[i].y + 1) * 16);
-                windowTexture.draw(r);
-                break;
-            case 5:
-                r.setPosition((asteroids[i].x + 1) * 16, asteroids[i].y * 16);
-                windowTexture.draw(r);
-                r.setPosition((asteroids[i].x + 1) * 16, (asteroids[i].y + 1) * 16);
-                windowTexture.draw(r);
-                r.setPosition(asteroids[i].x * 16, (asteroids[i].y + 1) * 16);
-                windowTexture.draw(r);
-                break;
-            default:
+                r.setTexture(&wall);
                 break;
         }
+        r.setPosition(entities[i].x * 16, entities[i].y * 16);
+        windowTexture.draw(r);
     }
 
+    // draw text stuff
     sprintf(tim, "Health: %d / 500", health);
     text.setString(tim);
     text.setPosition(816, 16);
     windowTexture.draw(text);
-
     sprintf(tim, "Experience: %d / 5000", experience);
     text.setString(tim);
     text.setPosition(816, 32);
     windowTexture.draw(text);
-
     sprintf(tim, "Remaining fuel: %d / 10000", fuel);
     text.setString(tim);
     text.setPosition(816, 48);
     windowTexture.draw(text);
-
     sprintf(tim, "At: s%d (%d , %d)", sector_s, sector_x, sector_y);
     text.setString(tim);
     text.setPosition(816, 64);
     windowTexture.draw(text);
 
+    // make it good fam
     windowTexture.display();
-
-
 }
 
 void draw_logo(){

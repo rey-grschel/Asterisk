@@ -1,5 +1,5 @@
 // for flight level view
-typedef struct level_data {
+struct level_data {
     int x;
     int y;
     char data[16];
@@ -9,7 +9,7 @@ typedef struct level_data {
 };
 
 // for info on each tile in sector
-typedef struct tile_data {
+struct tile_data {
     int x;
     int y;
     char data[16];

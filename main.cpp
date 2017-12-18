@@ -10,19 +10,12 @@ using namespace std;
 
 // timer
 double timerval = 0;
-double time_macro = 0;
-double time_asteroid = -1000;
 double time_character = 0;
-double time_enemy = 0;
-double time_gif = 0;
+double time_entity = 0;
 
 // enemy defs
-enemy enemies[ENEMIES];
-macro_entity macro_entities[64];
-asteroid_entity asteroids[16];
-int top_of_entities = 0;
-int asteriod_direction = 0;
-int top_of_asteroids = 0;
+entity entities[MAX_ENTITIES];
+int num_entities = 0;
 
 // map and screen sizing
 int mapdata[HEIGHT][WIDTH];
@@ -43,20 +36,20 @@ int credits = 1000;
 int fuel = 10000;
 
 // character location
-int character_x = 50;
-int character_y = 50;
+int character_x = 12;
+int character_y = 12;
 int dx = 0;
 int dy = 0;
 int facing = 0;
 
-int sector_s = 2;
-int sector_x = 4;
-int sector_y = 8;
+int sector_s = 3;
+int sector_x = 5;
+int sector_y = 4;
 
 int level = 0;
 
 // game state
-// 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self, 6: mod self confirm, 7: warp setup
+// -1: boot, 0: main map, 1: view, 2: selecting view, 3: view selected, 4: interacting, 5: mod self, 6: mod self confirm, 7: warp setup
 int state = -1;
 
 // texture
@@ -96,7 +89,7 @@ int main(){
 
     // generate level
     cout << "TERRAIN ..." << endl;
-    build_terrain(0, 0, 0);
+    build_terrain(5, 4, 3);
     cout << "DONE" << endl;
 
     // generate font
@@ -118,15 +111,15 @@ int main(){
 
         // update timer
         elapsed = clock.restart();
-        time_asteroid += elapsed.asMilliseconds();
+        time_entity += elapsed.asMilliseconds();
         time_character += elapsed.asMilliseconds();
-        time_macro += elapsed.asMilliseconds();
-        time_enemy += elapsed.asMilliseconds();
-        time_gif += elapsed.asMicroseconds();
 
         // handle events
         while (window.pollEvent(event)){
+            // close window if needed
             if (event.type == sf::Event::Closed) window.close();
+
+            // check keys (released to avoid repeated keypresses
             if (event.type == sf::Event::KeyReleased) {
 
                 // state handling
@@ -152,6 +145,7 @@ int main(){
 //                    generate_level();
                 }
 
+                // movement handling
                 if (event.key.code == sf::Keyboard::W){
                     jump_y--;
                     if (jump_y > 9) jump_y = 9;
@@ -184,15 +178,7 @@ int main(){
                     state = 0;
                 }
 
-                if (event.key.code == sf::Keyboard::V){
-                    state = 2;
-                    cout << "State: " << state << endl;
-                }
-
-                if (event.key.code == sf::Keyboard::A){
-                    top_of_entities = 0;
-                }
-
+                // navigation handling
                 if (event.key.code == sf::Keyboard::BackSpace){
                     facing = -10;
                 } else if(event.key.code == sf::Keyboard::Down){
@@ -212,23 +198,15 @@ int main(){
                         facing = 1;
                     }
                 } else if (event.key.code == sf::Keyboard::Space){
-                    if (state == 0){
-                        if (top_of_entities < 64){
-                            macro_entities[top_of_entities].facing = facing;
-                            macro_entities[top_of_entities].x = character_x;
-                            macro_entities[top_of_entities].y = character_y;
-                            macro_entities[top_of_entities].type = 0;
-                            macro_entities[top_of_entities].id = top_of_entities + rand() % 128;
-                            top_of_entities++;
-                        }
-                    } else if (state == -1){
-                        state = 0;
-                    }
+                    // TODO: add shooting and state checks
+                    state = 0;
                 }
 
+                // rotate by 45 deg
                 if (event.key.shift){
                     facing += 4;
-                } else {
+                } else if (event.key.code == sf::Keyboard::Z){
+                    facing -= 4;
                 }
             }
         }
@@ -240,16 +218,8 @@ int main(){
 
         //update everything
         if (state == 0){
-            update_enemies();
-            update_macro();
+            update_entities();
         }
-
-        // display main texture
-        windowTexture.setSmooth(true);
-        windowTexture.display();
-        const sf::Texture& texture = windowTexture.getTexture();
-        sf::Sprite sprite(texture);
-        sprite.setPosition(0,0);
 
         // draw screen
         switch(state){
@@ -273,6 +243,13 @@ int main(){
                 cleardisplay(false);
                 break;
         }
+
+        // display main texture
+        windowTexture.setSmooth(true);
+        windowTexture.display();
+        const sf::Texture& texture = windowTexture.getTexture();
+        sf::Sprite sprite(texture);
+        sprite.setPosition(0,0);
 
         // tidy up the window
         window.clear();

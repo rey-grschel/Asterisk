@@ -30,18 +30,61 @@ void search_and_build(const tile_data * tiledata){
                     cout << "SPAWN STATION AT X:" << tiledata[i].flight_data[j].x;
                     cout << " Y: " << tiledata[i].flight_data[j].y << endl;
 
+                    // create entity listing
+                    entities[num_entities].x = tiledata[i].flight_data[j].x;
+                    entities[num_entities].y = tiledata[i].flight_data[j].y;
+                    entities[num_entities].type = 0;
+                    for (int k = 0; k < 16; k++){
+                        entities[num_entities].data[i] = tiledata[i].flight_data[j].data[i];
+                    }
+                    entities[num_entities].vx = 0;
+                    entities[num_entities].vy = 0;
+                    if (num_entities < MAX_ENTITIES) num_entities++;
                     break;
                 case 1: //asteroid
                     cout << "SPAWN ASTEROID AT X:" << tiledata[i].flight_data[j].x;
                     cout << " Y: " << tiledata[i].flight_data[j].y << endl;
+                    for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
+                        entities[num_entities].x = tiledata[i].flight_data[j].x;
+                        entities[num_entities].y = tiledata[i].flight_data[j].y;
+                        entities[num_entities].type = 1;
+                        for (int k = 0; k < 16; k++){
+                            entities[num_entities].data[i] = tiledata[i].flight_data[j].data[i];
+                        }
+                        entities[num_entities].vx = (rand() % 10 > 5) ? -1 : 1;
+                        entities[num_entities].vy = (rand() % 10 > 5) ? -1 : 1;
+                        if (num_entities < MAX_ENTITIES) num_entities++;
+                    }
                     break;
                 case 2: // enemy
                     cout << "SPAWN ENEMY AT X:" << tiledata[i].flight_data[j].x;
                     cout << " Y: " << tiledata[i].flight_data[j].y << endl;
+                    for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
+                        entities[num_entities].x = tiledata[i].flight_data[j].x;
+                        entities[num_entities].y = tiledata[i].flight_data[j].y;
+                        entities[num_entities].type = 2;
+                        for (int k = 0; k < 16; k++){
+                            entities[num_entities].data[i] = tiledata[i].flight_data[j].data[i];
+                        }
+                        entities[num_entities].vx = (rand() % 10 > 5) ? -1 : 1;
+                        entities[num_entities].vy = (rand() % 10 > 5) ? -1 : 1;
+                        if (num_entities < MAX_ENTITIES) num_entities++;
+                    }
                     break;
                 case 3: // debris
                     cout << "SPAWN DEBRIS AT X:" << tiledata[i].flight_data[j].x;
                     cout << " Y: " << tiledata[i].flight_data[j].y << endl;
+                    for (int m = 0; m < tiledata[i].flight_data[j].num; m++){
+                        entities[num_entities].x = rand() % WIDTH;
+                        entities[num_entities].y = rand() % HEIGHT;
+                        entities[num_entities].type = 1;
+                        for (int k = 0; k < 16; k++){
+                            entities[num_entities].data[i] = tiledata[i].flight_data[j].data[i];
+                        }
+                        entities[num_entities].vx = 0;
+                        entities[num_entities].vy = 0;
+                        if (num_entities < MAX_ENTITIES) num_entities++;
+                    }
                     break;
                 default:
                     cout << "FAILED WITH: " << tiledata[i].flight_data[j].type << endl;

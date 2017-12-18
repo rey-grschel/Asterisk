@@ -4,68 +4,17 @@
 #include <iostream>
 using namespace std;
 
-void update_enemies(){
-    if (time_enemy > TIME_ENEMY ){
-        time_enemy = 0;
-        for(int i = 0; i < ENEMIES; i++){
-            switch (enemies[i].facing){
-                case 0:
-                    enemies[i].y--;
-                    break;
-                case 1:
-                    enemies[i].y++;
-                    break;
-                case 2:
-                    enemies[i].y++;
-                    break;
-                case 3:
-                    enemies[i].x--;
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-}
-
-void update_macro(void){
-    if (time_macro > TIME_MACRO){
-        time_macro = 0;
-        for (int i = 0; i < top_of_entities; i++){
-            // remove out of bound entities
-            if (macro_entities[i].x > WIDTH || macro_entities[i].x < 0 || macro_entities[i].y > HEIGHT || macro_entities[i].y < 0){
-                for (int j = i; j < top_of_entities; j++){
-                    macro_entities[j] = macro_entities[j + 1];
-                }
-                top_of_entities--;
-            }
-
-            // update entities
-            if (macro_entities[i].type == 0){
-                switch(macro_entities[i].facing){
-                    case 0: macro_entities[i].y--; break;
-                    case 1: macro_entities[i].x++; break;
-                    case 2: macro_entities[i].y++; break;
-                    case 3: macro_entities[i].x--; break;
-                    case 4: macro_entities[i].y--; macro_entities[i].x++; break;
-                    case 5: macro_entities[i].x++; macro_entities[i].y++; break;
-                    case 6: macro_entities[i].y++; macro_entities[i].x--;break;
-                    case 7: macro_entities[i].x--; macro_entities[i].y--;break;
-                    default: break;
-                }
-                for(int k = 0; k < ENEMIES; k++){
-                    if (enemies[k].x == macro_entities[i].x && enemies[k].y == macro_entities[i].y){
-                        for (int j = i; j < top_of_entities; j++){
-                            macro_entities[j] = macro_entities[j + 1];
-                        }
-                        top_of_entities--;
-                    }
-                }
-            }
+void update_entities(){
+    if (time_entity > TIME_ENTITY ){
+        time_entity = 0;
+        for (int i = 0; i < num_entities; i++){
+            if (entities[i].x >= WIDTH - 1 || entities[i].x <= 0) entities[i].vx = - entities[i].vx;
+            if (entities[i].y >= HEIGHT - 1 || entities[i].y <= 0) entities[i].vy = - entities[i].vy;
+            entities[i].x += entities[i].vx;
+            entities[i].y += entities[i].vy;
         }
     }
 
-    // update character
     if (time_character > TIME_CHARACTER){
         time_character = 0;
         switch(facing){
@@ -81,4 +30,3 @@ void update_macro(void){
         }
     }
 }
-

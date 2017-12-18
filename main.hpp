@@ -1,30 +1,12 @@
 #include <SFML/Graphics.hpp>
 
-typedef struct enemy {
-    int id;
-    int tile_id;
-    int facing;
+struct entity{
     int x;
     int y;
-};
-
-typedef struct macro_entity {
-    int id;
-    int type;   // 0 - missile, 1 - flak
-    int facing;
-    int x;
-    int y;
-};
-
-typedef struct asteroid_entity {
-    bool type;
-    int facing;
-    int x;
-    int y;
-    int mod_vx;
-    int mod_vy;
-    int data[16];
-    int tiles;
+    int vx;
+    int vy;
+    char data[16];
+    int type; // 0 = station, 1 = asteroid, 2 = enemy, 3 = debris, 4 = ice station, 6 = planet
 };
 
 #define PAD_LEFT 128
@@ -40,37 +22,21 @@ typedef struct asteroid_entity {
 #define S_WIDTH 1024
 #define S_HEIGHT 576
 
-// tick thresold
-#define TICK_THRESHOLD 5
-
 // entity timing constants milliseconds)
-#define TIME_ENEMY 1000
-#define TIME_MACRO 100
-#define TIME_ASTROID 500
 #define TIME_CHARACTER 760
+#define TIME_ENTITY 1000
 
-// number of enemies
-#define ENEMIES 4
+// max entities
+#define MAX_ENTITIES 64
 
 // timing
-extern double time_macro;
-extern double time_asteroid;
+extern double timerval;
 extern double time_character;
-extern double time_enemy;
-extern double time_gif;
+extern double time_entity;
 
 // entity defs
-extern enemy enemies[ENEMIES];
-extern macro_entity macro_entities[64];
-extern asteroid_entity asteroids[16];
-extern int top_of_entities;
-extern int top_of_asteroids;
-
-// direction of asteriod
-extern int asteriod_direction;
-
-// time interval
-extern double timerval;
+extern entity entities[MAX_ENTITIES];
+extern int num_entities;
 
 // maps
 extern int mapdata[HEIGHT][WIDTH];
