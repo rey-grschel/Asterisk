@@ -7,6 +7,7 @@ struct entity{
     int vy;
     char data[16];
     int type; // 0 = station, 1 = asteroid, 2 = enemy, 3 = debris, 4 = ice station, 6 = planet
+    int id;
 };
 
 #define PAD_LEFT 128
@@ -37,6 +38,7 @@ extern double time_entity;
 // entity defs
 extern entity entities[MAX_ENTITIES];
 extern int num_entities;
+extern int id_entity_last;
 
 // maps
 extern int mapdata[HEIGHT][WIDTH];
@@ -58,6 +60,7 @@ extern int sector_x;
 extern int sector_y;
 extern int sector_s;
 extern int level;
+
 
 // main window texture handle
 extern sf::RenderTexture windowTexture;

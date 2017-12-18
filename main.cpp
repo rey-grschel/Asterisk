@@ -16,6 +16,7 @@ double time_entity = 0;
 // enemy defs
 entity entities[MAX_ENTITIES];
 int num_entities = 0;
+int id_entity_last = 0;
 
 // map and screen sizing
 int mapdata[HEIGHT][WIDTH];
@@ -125,23 +126,23 @@ int main(){
                 // state handling
                 if (event.key.code == sf::Keyboard::Num1) {
                     // main menu
-                    state = 0;
+                    if (state > -2 ) state = 0;
                 } else if (event.key.code == sf::Keyboard::Num2) {
                     // view ssf::RectangleShape r(sf::Vector2f(16, 16));tate
-                    state = 1;
+                    if (state > -2 ) state = 1;
                 } else if (event.key.code == sf::Keyboard::Num3) {
                     // view state
-                    state = 5;
+                    if (state > -2 ) state = 5;
                 } else if (event.key.code == sf::Keyboard::Num4) {
                     // view state
-                    state = 7;
+                    if (state > -2 ) state = 7;
                     // reset jump to settings
                     jump_x = sector_x;
                     jump_y = sector_y;
                     jump_s = sector_s;
                 } else if (event.key.code == sf::Keyboard::Num0) {
                     // logo mode
-                    state = -1;
+                    if (state > -2 ) state = -1;
 //                    generate_level();
                 }
 
@@ -182,24 +183,28 @@ int main(){
                 if (event.key.code == sf::Keyboard::BackSpace){
                     facing = -10;
                 } else if(event.key.code == sf::Keyboard::Down){
-                    if ((get_terrain(character_x, character_y + 1)) == 0){
+                    //if ((get_terrain(character_x, character_y + 1)) == 0){
+                    if (character_y + 1 < HEIGHT){
                         facing = 2;
                     }
                 } else if (event.key.code == sf::Keyboard::Up){
-                    if ((get_terrain(character_x, character_y - 1)) == 0) {
+                    //if ((get_terrain(character_x, character_y - 1)) == 0) {
+                    if (character_y - 1 > 0){
                         facing = 0;
                     }
                 } else if (event.key.code == sf::Keyboard::Left){
-                    if ((get_terrain(character_x - 1, character_y)) == 0) {
+                    //if ((get_terrain(character_x - 1, character_y)) == 0) {
+                    if (character_x - 1 > 0){
                         facing = 3;
                     }
                 } else if (event.key.code == sf::Keyboard::Right){
-                    if ((get_terrain(character_x + 1, character_y)) == 0) {
+                    //if ((get_terrain(character_x + 1, character_y)) == 0) {
+                    if (character_x + 1 < WIDTH){
                         facing = 1;
                     }
                 } else if (event.key.code == sf::Keyboard::Space){
                     // TODO: add shooting and state checks
-                    state = 0;
+                    if (state > -2 ) state = 0;
                 }
 
                 // rotate by 45 deg
@@ -223,6 +228,10 @@ int main(){
 
         // draw screen
         switch(state){
+            case -2:
+                // game over?
+                draw_logo();
+                break;
             case -1:
                 draw_logo();
                 break;

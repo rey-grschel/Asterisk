@@ -389,6 +389,8 @@ void display(bool update, int state){
             case 3:
                 r.setTexture(&wall);
                 break;
+            default:
+                r.setTexture(&debug);
         }
         r.setPosition(entities[i].x * 16, entities[i].y * 16);
         windowTexture.draw(r);
