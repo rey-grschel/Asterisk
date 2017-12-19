@@ -5,7 +5,7 @@ Asteroid + risk
 - Entity AIs
 - Multiple timing systems 
 - Fix icons on at warp screen
-- Convert all resources to homebreq compat format
+- Convert all resources to homebrew compatible format
 - Clean up code
 - Add combat map and functionality
 - Add station docking and functionality
@@ -14,4 +14,5 @@ Asteroid + risk
 - Add support for viewing mode
 - Add support for upgrading mode
 - Add combat system
-
+- Add better warp system
+- Improve UI
